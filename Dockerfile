@@ -1,6 +1,5 @@
 FROM python:3.11-slim
 
-# Cloud Run sends traffic to $PORT (default 8080)
 EXPOSE 8080
 
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -13,5 +12,5 @@ COPY . /app
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Tell Streamlit to listen on $PORT
-CMD ["streamlit", "run", "app.py", "--server.port=${PORT}", "--server.enableCORS=false", "--server.enableXsrfProtection=false"]
+# ✅ Correct way to pass env variable to Streamlit
+CMD streamlit run app.py --server.port=$PORT --server.enableCORS=false --server.enableXsrfProtection=false
