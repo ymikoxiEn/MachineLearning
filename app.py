@@ -20,7 +20,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-def interpret_with_ollama(prompt, model="llama2"):
+def interpret_with_ollama(prompt, model="tinyllama"):
     try:
         response = requests.post(
             "http://localhost:11434/api/generate",
