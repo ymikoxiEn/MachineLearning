@@ -20,16 +20,39 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
+import requests
+
 def interpret_with_ollama(prompt, model="tinyllama"):
     try:
-        response = requests.post(
-            "http://localhost:11434/api/generate",
-            json={"model": model, "prompt": prompt, "stream": False}
-        )
+        url = "http://localhost:11434/api/generate"
+        payload = {
+            "model": model,
+            "prompt": prompt,
+            "stream": False
+        }
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+
+        # Raise an error for bad HTTP status codes
         response.raise_for_status()
-        return response.json()['response']
+
+        # Check response content
+        data = response.json()
+        if "response" in data:
+            return data["response"]
+        else:
+            return f"⚠️ Unexpected response format: {data}"
+        
+    except requests.exceptions.ConnectionError:
+        return "❌ Error: Ollama server is not running at http://localhost:11434"
+    except requests.exceptions.HTTPError as http_err:
+        return f"❌ HTTP error: {http_err}"
     except Exception as e:
-        return f"❌ Error contacting Ollama: {e}"
+        return f"❌ Unexpected error: {e}"
+
 
 # Upload interface
 st.title("Statistical Analyzer & AI Interpreter")
